@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Skill Lab — Learn by doing</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brandmark">SL</div><div><strong>SKILL LAB</strong><small>Learn it. Practise it. Build it.</small></div></div>
+  <div class="top-actions"><span class="streak">✦ <b id="points">0</b> XP</span><button class="icon-btn" id="resetBtn" title="Reset progress">↻</button></div>
+</header>
+<div class="app-shell">
+  <aside class="sidebar">
+    <p class="eyebrow">YOUR WORKSPACE</p>
+    <button class="nav active" data-page="dashboard"><span>▦</span> Overview</button>
+    <button class="nav" data-page="excel"><span>▤</span> Excel Lab <i>01</i></button>
+    <button class="nav" data-page="python"><span>⌘</span> Python Lab <i>02</i></button>
+    <button class="nav" data-page="ai"><span>✧</span> AI Lab <i>03</i></button>
+    <button class="nav" data-page="projects"><span>◈</span> Projects</button>
+    <button class="nav" data-page="datasets"><span>▧</span> Datasets</button>
+    <div class="sidebar-bottom"><div class="mini-avatar">🚀</div><div><b>Beginner track</b><small>Build skills one day at a time</small></div></div>
+  </aside>
+  <main id="main" class="main-content">
+    <section class="hero">
+      <div><span class="pill">YOUR PERSONAL LEARNING SPACE</span><h1>Small steps.<br><em>Real skills.</em></h1><p>Learn Excel, Python and AI with bite-sized lessons, guided practice and practical projects.</p><button class="primary" id="continueBtn">Continue learning <span>→</span></button></div>
+      <div class="hero-art"><div class="orb orb1"></div><div class="orb orb2"></div><div class="hero-card"><span class="hero-icon">✦</span><small>YOUR NEXT LEVEL</small><strong>Data & AI<br>Explorer</strong><div class="progress-line"><span id="heroProgress"></span></div><small id="progressLabel">0% completed</small></div><div class="float-tag tag1">Excel <b>↗</b></div><div class="float-tag tag2">Python <b>⌘</b></div><div class="float-tag tag3">AI <b>✧</b></div></div>
+    </section>
+    <div class="section-heading"><div><p class="eyebrow">YOUR DASHBOARD</p><h2>Pick up where you left off</h2></div><span class="muted" id="completedLabel">0 lessons completed</span></div>
+    <div class="stats-grid">
+      <div class="stat-card"><span class="stat-icon green">▤</span><small>LESSONS DONE</small><strong id="lessonsDone">0</strong><span class="muted">Keep the momentum</span></div>
+      <div class="stat-card"><span class="stat-icon blue">✓</span><small>PRACTICE SOLVED</small><strong id="practiceDone">0</strong><span class="muted">One question at a time</span></div>
+      <div class="stat-card"><span class="stat-icon purple">✧</span><small>XP EARNED</small><strong id="xpDone">0</strong><span class="muted">Learning adds up</span></div>
+    </div>
+    <div class="section-heading"><div><p class="eyebrow">LEARNING PATHS</p><h2>Choose your next skill</h2></div></div>
+    <div class="module-grid" id="moduleCards"></div>
+    <div class="section-heading"><div><p class="eyebrow">THIS WEEK</p><h2>Your study plan</h2></div></div>
+    <div class="week-plan"><div><b>01</b><span><strong>Learn</strong><small>Understand one concept</small></span></div><div><b>02</b><span><strong>Practise</strong><small>Try it without peeking</small></span></div><div><b>03</b><span><strong>Build</strong><small>Apply it to a mini-project</small></span></div><div><b>04</b><span><strong>Review</strong><small>Check what stuck</small></span></div></div>
+    <footer>Skill Lab · Progress saves in this browser · Internet needed for first-time CDN features where used</footer>
+  </main>
+</div>
+<script defer src="app.js?v=2"></script>
+</body>
+</html>

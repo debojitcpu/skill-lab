@@ -1,0 +1,18 @@
+{
+  "name": "Skill Lab \u2014 Learn by Doing",
+  "short_name": "Skill Lab",
+  "description": "Beginner-friendly Excel, Python and AI lessons, practice and projects.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0c1220",
+  "theme_color": "#101827",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
