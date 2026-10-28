@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "generated_at": "Run the GitHub Actions workflow to refresh web resources",
+  "update_frequency": "weekly",
+  "topics": {
+    "excel": {
+      "articles": [],
+      "questions": [],
+      "status": "waiting_for_first_run"
+    },
+    "python": {
+      "articles": [],
+      "questions": [],
+      "status": "waiting_for_first_run"
+    },
+    "ai": {
+      "articles": [],
+      "questions": [],
+      "status": "waiting_for_first_run"
+    }
+  },
+  "notice": "No AI API or API key required. The weekly workflow refreshes web-resource links and includes curated starter practice questions."
+}

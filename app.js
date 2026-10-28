@@ -70,10 +70,45 @@ function lessonQuestion(m,i){if(m==="excel")return ["What does A1 refer to?","Wh
 function lessonTip(m,i){if(m==="excel")return ["A1 is column A, row 1.","SUM adds; AVERAGE calculates the mean; COUNT counts numbers.","IF returns one value when a condition is true and another when false.","SUMIFS accepts multiple criteria.","Look up a key, then return its related value.","Summarise data by category with totals/counts/averages.","Keep the raw data unchanged so you can audit your work."][i];if(m==="python")return ["print() displays output.","True/False values use bool.","if introduces a conditional branch.","for item in items iterates over a collection.","A dictionary maps keys to values.","Use def to define a function.","Pandas is commonly used for data tables."][i];return ["AI is the broad field.","Include context, task, constraints and output format.","Models can make confident mistakes.","Ask for code explanations and analysis, then verify results.","A feature is an input used by a model.","Regression predicts a numeric value.","Biased or unrepresentative data can lead to unfair results."][i]}
 function renderQuiz(m){let d=lessonData[m],idx=(state.quiz[m]||0)%d.quiz.length,q=d.quiz[idx];$("#quizArea").innerHTML=`<span class="small-label">QUESTION ${(idx+1)} OF ${d.quiz.length}</span><p><b>${q[0]}</b></p>${q[1].map((a,i)=>`<button class="quiz-option" data-opt="${i}">${String.fromCharCode(65+i)}. ${a}</button>`).join("")}<div class="action-row"><button id="nextQuiz">Next question →</button></div>`;$$("[data-opt]").forEach(b=>b.onclick=()=>{let right=Number(b.dataset.opt)===q[2],fb=$("#quizFeedback");fb.className="feedback show "+(right?"good":"bad");fb.textContent=(right?"Correct! ":"Not quite. ")+q[3];if(right){let k=key(m,"quiz"+idx);if(!state.solved[k]){state.solved[k]=true;state.xp+=5;save()}}});$("#nextQuiz").onclick=()=>{state.quiz[m]=idx+1;save();renderQuiz(m)}}
 function renderProjects(){$("#main").innerHTML=`<p class="eyebrow">PUT YOUR SKILLS TO WORK</p><h1 class="page-title">Project Studio</h1><p class="page-intro">Build small, complete projects. Each one should end with a result you can explain, not just a folder of code.</p><div class="project-grid">${projects.map((p,i)=>`<article class="project-card"><span class="tagline">${p.level}</span><h3>${p.title}</h3><p>${p.desc}</p><button class="secondary" data-project="${i}">Open project brief →</button><div class="feedback info" id="project${i}">${p.steps.map((s,n)=>`${n+1}. ${s}`).join("<br>")}</div></article>`).join("")}</div>`;$$("[data-project]").forEach(b=>b.onclick=()=>{$("#project"+b.dataset.project).classList.toggle("show")})}
+async function renderWeeklyPractice(){
+ currentPage="practice";
+ $("#main").innerHTML=`<p class="eyebrow">FRESH MATERIAL · WEEKLY</p><h1 class="page-title">↻ Weekly Practice</h1><p class="page-intro">New learning links and curated practice questions for Excel, Python and AI. Web resources refresh every Monday when GitHub Actions runs.</p><div class="action-row"><button class="primary" id="reloadPractice">Refresh feed ↻</button><span class="muted" id="practiceStatus">Loading practice.json…</span></div><div id="practiceContent" class="practice-feed"><div class="panel">Loading the latest practice set…</div></div><footer>Curated starter questions plus links to public learning resources. Check the source links for current guidance.</footer>`;
+ const status=$("#practiceStatus"), content=$("#practiceContent");
+ async function load(){
+   status.textContent="Loading latest data…"; content.innerHTML='<div class="panel">Loading…</div>';
+   try{
+     const response=await fetch("./practice.json?updated="+Date.now(),{cache:"no-store"});
+     if(!response.ok) throw new Error("HTTP "+response.status);
+     const data=await response.json();
+     const labels={excel:"Excel",python:"Python",ai:"AI"};
+     let html=`<div class="panel"><p class="muted">Last generated: ${escapeHTML(data.generated_at||"Not available")}</p><p>${escapeHTML(data.notice||"")}</p></div>`;
+     for(const topic of ["excel","python","ai"]){
+       const section=(data.topics||{})[topic]||{};
+       html+=`<section class="panel"><h2>${labels[topic]} practice</h2><p class="muted">${(section.articles||[]).length} web links · ${(section.questions||[]).length} practice questions</p>`;
+       if(!(section.questions||[]).length) html+='<p>No practice questions available yet. Run the GitHub Actions workflow manually if the feed has not updated.</p>';
+       for(const q of (section.questions||[])){
+         const opts=(q.options||[]).map((o,i)=>`<li>${String.fromCharCode(65+i)}. ${escapeHTML(o)}</li>`).join("");
+         const sources=(q.source_urls||[]).map(u=>`<a href="${escapeHTML(u)}" target="_blank" rel="noopener noreferrer">Open source ↗</a>`).join(" · ");
+         html+=`<article class="practice-question"><div class="module-meta"><span class="tagline">${escapeHTML(q.difficulty||"beginner")}</span><span class="muted">${escapeHTML(q.type||"practice")}</span></div><h3>${escapeHTML(q.question||"")}</h3>${opts?`<ol>${opts}</ol>`:""}<button class="secondary" data-answer="${escapeHTML(q.id||"")}">Show answer</button><div class="feedback info" data-explanation="${escapeHTML(q.id||"")}"><b>Answer:</b> ${escapeHTML(q.answer||"")}<br>${escapeHTML(q.explanation||"")}</div><p class="muted">${sources||"Foundational practice · no direct source attached"}</p></article>`;
+       }
+       if((section.articles||[]).length){html+='<h3>Recent web resources</h3><ul class="practice-links">'; for(const a of section.articles){html+=`<li><a href="${escapeHTML(a.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(a.title)}</a><p class="muted">${escapeHTML(a.summary||"")}</p></li>`;} html+='</ul>';}
+       html+='</section>';
+     }
+     content.innerHTML=html;
+     content.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{const box=content.querySelector(`[data-explanation="${CSS.escape(b.dataset.answer)}"]`);if(box){box.classList.toggle("show");b.textContent=box.classList.contains("show")?"Hide answer":"Show answer";}});
+     status.textContent="Updated: "+(data.generated_at||"date unavailable");
+   }catch(error){
+     status.textContent="Could not load weekly feed";
+     content.innerHTML=`<div class="panel"><h3>Practice feed isn't available yet</h3><p>This feature needs the app hosted on GitHub Pages or a local web server; opening index.html directly may block fetch requests.</p><p>Error: ${escapeHTML(error.message)}</p><p>After publishing, run GitHub → Actions → Update Skill Lab practice → Run workflow.</p></div>`;
+   }
+ }
+ $("#reloadPractice").onclick=load;
+ await load();
+}
 function renderDatasets(){$("#main").innerHTML=`<p class="eyebrow">DOWNLOADABLE PRACTICE FILES</p><h1 class="page-title">Datasets</h1><p class="page-intro">Use these small fictional datasets for Excel, Python and SQL exercises. Download a CSV, open it in Excel, or load it with Python's pandas library.</p><div class="dataset-grid">${datasets.map((d,i)=>`<article class="dataset-card"><span class="tagline">CSV · ${d.data.length-1} ROWS</span><h3>${d.name}</h3><p>${d.desc}</p><div class="table-wrap">${d.data.slice(0,4).map((row,ri)=>`<div class="code">${row.join("  |  ")}</div>`).join("")}</div><button class="primary" data-dataset="${i}">Download ${d.file} ↓</button></article>`).join("")}</div>`;$$("[data-dataset]").forEach(b=>b.onclick=()=>downloadCSV(datasets[Number(b.dataset.dataset)]))}
 function downloadCSV(d){let csv=d.data.map(r=>r.map(v=>{let s=String(v);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(",")).join("\r\n");let blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=d.file;a.click();URL.revokeObjectURL(url)}
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function navigate(page){$$(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page===page));if(page==="dashboard")renderDashboard();else if(lessonData[page])renderModule(page);else if(page==="projects")renderProjects();else if(page==="datasets")renderDatasets()}
+function navigate(page){$$(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page===page));if(page==="dashboard")renderDashboard();else if(lessonData[page])renderModule(page);else if(page==="projects")renderProjects();else if(page==="datasets")renderDatasets();else if(page==="practice")renderWeeklyPractice()}
 $$(".nav").forEach(n=>n.addEventListener("click",()=>navigate(n.dataset.page)));
 $("#resetBtn").onclick=()=>{if(confirm("Reset all Skill Lab progress on this browser? This cannot be undone.")){state={completed:{},solved:{},xp:0,quiz:{}};save();navigate("dashboard")}};
 $("#continueBtn").onclick=()=>navigate("excel");

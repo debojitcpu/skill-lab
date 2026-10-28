@@ -56,3 +56,14 @@ input, textarea, select, pre, code, .code-editor {
 }
 a { color: #9bb9e8; }
 a:hover { color: #c0d2f2; }
+
+/* Weekly practice feed */
+.practice-feed{display:grid;gap:16px;margin-top:20px}
+.practice-feed .panel{min-width:0}
+.practice-question{border:1px solid var(--line,#414957);border-radius:12px;padding:16px;margin:14px 0;background:rgba(255,255,255,.02)}
+.practice-question h3{margin:12px 0;line-height:1.45}
+.practice-question ol{padding-left:22px;line-height:1.8}
+.practice-question .feedback{margin-top:12px}
+.practice-links{padding-left:20px}
+.practice-links li{margin:12px 0}
+.practice-links a{overflow-wrap:anywhere}
